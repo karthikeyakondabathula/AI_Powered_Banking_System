@@ -1,0 +1,24 @@
+{
+  "interest_rates": {
+    "home": 8.5,
+    "personal": 11.5,
+    "education": 7.2
+  },
+  "loan_types_available": ["home", "personal", "education"],
+  "dos_and_donts": {
+    "dos": [
+      "Provide accurate account-related queries.",
+      "all in rupees only",
+      "Use correct loan application format: {loantype, amount, duration}.",
+      "You can block/unblock cards of the user",
+      "Ask about your own account details only."
+    ],
+    "donts": [
+      "Do not attempt to access or modify other users' information.",
+      "Do not submit raw SQL commands or queries.",
+      "Do not request general information like weather, news, or jokes.",
+      "This system is strictly for internet banking-related operations."
+    ]
+  },
+  "system_policy": "This AI bot is authorized only for safe, account-specific banking tasks. All queries should relate to user's own account. Malicious or non-banking queries will be rejected."
+}

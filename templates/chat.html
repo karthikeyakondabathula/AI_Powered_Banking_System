@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3c72 100%);
+            color: white;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .welcome-text {
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Dashboard Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #28a745;
+            margin: 10px 0;
+        }
+
+        .account-number {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            border-color: #2c5aa0;
+            background: #f8f9ff;
+        }
+
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Recent Transactions */
+        .transactions {
+            grid-column: 1 / -1;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-details h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .transaction-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .amount-credit {
+            color: #28a745;
+        }
+
+        .amount-debit {
+            color: #dc3545;
+        }
+
+        /* Chatbot Widget */
+        .chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-container.active {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .chat-response {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .bot-label {
+            color: #28a745;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .bot-label::before {
+            content: "🤖";
+            margin-right: 8px;
+        }
+
+        .chat-form {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #28a745;
+        }
+
+        .chat-submit {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .chat-submit:hover {
+            background: #218838;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 20px 15px;
+            }
+
+            .chat-container {
+                width: 300px;
+                height: 400px;
+            }
+
+            .header-content {
+                padding: 0 15px;
+            }
+
+            .user-info {
+                gap: 10px;
+            }
+
+            .welcome-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">SecureBank</div>
+            <div class="user-info">
+                <span class="welcome-text">Welcome, {{ user_id }}!</span>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="main-content">
+        <!-- Account Balance Cards -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Savings Account</div>
+                <div class="card-icon">💰</div>
+            </div>
+            <div class="balance-amount">₹12,450.75</div>
+            <div class="account-number">****1234</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Current Account</div>
+                <div class="card-icon">🏦</div>
+            </div>
+            <div class="balance-amount">₹8,920.30</div>
+            <div class="account-number">****5678</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Credit Card</div>
+                <div class="card-icon">💳</div>
+            </div>
+            <div class="balance-amount">₹2,150.00</div>
+            <div class="account-number">Available Credit</div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="#" class="action-btn">
+                <span class="action-icon">💸</span>
+                Transfer Money
+            </a>
+            <a href="#" class="action-btn">
+                <span class="action-icon">💰</span>
+                Pay Bills
+            </a>
+            <a href="#" class="action-btn">
+                <span class="action-icon">📊</span>
+                View Statements
+            </a>
+            <a href="#" class="action-btn">
+                <span class="action-icon">🎯</span>
+                Investments
+            </a>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="card transactions">
+            <div class="card-header">
+                <div class="card-title">Recent Transactions</div>
+                <div class="card-icon">📋</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-details">
+                    <h4>Online Purchase - Amazon</h4>
+                    <div class="transaction-date">Today, 2:30 PM</div>
+                </div>
+                <div class="transaction-amount amount-debit">-₹89.99</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-details">
+                    <h4>Salary Credit</h4>
+                    <div class="transaction-date">Yesterday, 9:00 AM</div>
+                </div>
+                <div class="transaction-amount amount-credit">+₹3,500.00</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-details">
+                    <h4>Electricity Bill</h4>
+                    <div class="transaction-date">Jan 25, 2024</div>
+                </div>
+                <div class="transaction-amount amount-debit">-₹125.50</div>
+            </div>
+
+            <div class="transaction-item">
+                <div class="transaction-details">
+                    <h4>ATM Withdrawal</h4>
+                    <div class="transaction-date">Jan 24, 2024</div>
+                </div>
+                <div class="transaction-amount amount-debit">-₹200.00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-widget">
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <div class="chat-title">Banking Assistant</div>
+                <button class="chat-close" onclick="toggleChat()">×</button>
+            </div>
+
+            <div class="chat-messages">
+                {% if response %}
+                <div class="chat-response">
+                    <div class="bot-label">Banking Assistant</div>
+                    <p>{{ response }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <form method="post" class="chat-form">
+                <input type="text" name="query" class="chat-input" placeholder="Ask me something..." required>
+                <button type="submit" class="chat-submit">➤</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.classList.toggle('active');
+        }
+
+        // Keep chat open if there's a response and auto-focus input
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chatContainer');
+            const chatInput = document.querySelector('.chat-input');
+            const hasResponse = {{ 'true' if response else 'false' }};
+
+            // If there's a response, keep the chat open
+            if (hasResponse) {
+                chatContainer.classList.add('active');
+                // Focus the input field for next question
+                if (chatInput) {
+                    chatInput.focus();
+                }
+            }
+
+            // Auto-scroll chat messages to bottom
+            const chatMessages = document.querySelector('.chat-messages');
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+
+        // Handle form submission to clear input after submit
+        document.querySelector('.chat-form').addEventListener('submit', function(e) {
+            const chatInput = document.querySelector('.chat-input');
+            // Store the input value briefly then clear it
+            setTimeout(function() {
+                if (chatInput) {
+                    chatInput.value = '';
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
