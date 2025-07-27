@@ -5,8 +5,8 @@ This project is an intelligent banking chatbot built using **Flask**, **SQLite**
 
 ---
 
-!(Output Screenshot 1)[output_1.png]
-!(Output Screenshot 2)[output_2.png]
+![Output Screenshot 1](output_1.png)
+![Output Screenshot 2](output_2.png)
 ## 🚀 Features
 
 - 🔐 User Login System
